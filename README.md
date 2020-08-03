@@ -10,5 +10,11 @@ docker build -t chatbot-api:latest .
 docker run -it --rm <image-name>
 ```
 
+### API Documentation
+For get the endpoints and how request resources, use this URL:
+```
+http://localhost:8080/v1/swagger-ui/#/
+```
+
 ## License
 The license used for this project is MIT
