@@ -1,0 +1,204 @@
+# Example OpenAPI YAML to get you started quickly.
+# Note: YAML has indentation based coping.
+# Code completion support is available so start typing for
+# available options.
+# This example follows the recommendations of the API
+# Improvement Proposals for common API patterns. Find more
+# at https://google.aip.dev/
+
+# Find the full OpenAPI reference at:
+# https://github.com/OAI/OpenAPI-Specification
+openapi: 3.0.3
+
+# This is your document metadata.
+info:
+  version: 0.0.1
+  title: Chatbot
+  description: |
+    Chatbot API for explore Istio and Canary with Flagger.app
+
+# Servers where this API is hosted
+servers:
+  - url: https://chatbot.elnatan.com.br
+
+# Describe your paths here
+paths:
+  # This is a endpoint path.
+  '/v1/message':
+    # This is an HTTP operation
+    get:
+      # Describe this verb here. Note: you can use markdown
+      summary: 'List `Message` objects.'
+      description: |
+        Retrieve a page of `Message` objects from the server.
+        Follows the standards for parameters from the
+        [List AIP](  https://aip.dev/132).
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        '200':
+          description: Successful response
+          # Response body content.
+          content:
+            # JSON response with a schema referenced from the
+            # components object.
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _embedded:
+                    type: object
+                    properties:
+                      message:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ListOfMessages'
+    post:
+      summary: Post a new message
+      description: |
+        Post new message for users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestMessage"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageData'
+    delete:
+      summary: Delete message
+      description: |
+        Delete message by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: "5f26ea1b242fad0808df33c3"
+          description: The message ID
+      responses:
+        '204':
+          description: Return no content
+
+  '/v1/message/search/findByAuthor':
+    # This is an HTTP operation
+    get:
+      # Describe this verb here. Note: you can use markdown
+      summary: 'List `Message` objects.'
+      description: |
+        Retrieve a page of `Message` objects from the server.
+        Follows the standards for parameters from the
+        [List AIP](  https://aip.dev/132).
+      parameters:
+        - in: query
+          name: author
+          schema:
+            type: string
+          description: bot@elnatan.com.br
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        '200':
+          description: Successful response
+          # Response body content.
+          content:
+            # JSON response with a schema referenced from the
+            # components object.
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _embedded:
+                    type: object
+                    properties:
+                      message:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ListOfMessages'
+
+  '/v1/info/environment':
+    get:
+      description: 'Retrieve a info about host.'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hostname'
+
+# Reusable components of your API belong here. Utilize
+# components with JSON references.
+components:
+  # Schemas is a map of names to Schema objects
+  schemas:
+    RequestMessage:
+      title: Request Body Message
+      type: object
+      properties:
+        text:
+          type: string
+          example: "Hello!"
+        author:
+          type: string
+          example: "bot@elnatan.com.br"
+          pattern: "[a-z]*@\\w+\\.\\w+(\\.\\w+)?"
+    # A list of Person objects
+    ListOfMessages:
+      title: List of Messages
+      type: array
+      items:
+        $ref: '#/components/schemas/MessageData'
+    # A single message object
+    MessageData:
+      title: Message
+      type: object
+      properties:
+        text:
+          description: 'Text message.'
+          type: string
+          example: "Hi!"
+        author:
+          description: 'Sender email'
+          example: 'bot@elnatan.com.br'
+          type: string
+        date:
+          description: 'Insert date'
+          example: 'Sun Aug 02 17:20:09 BRT 2020'
+          type: string
+        _links:
+          type: object
+          description: Links for message
+          $ref: '#/components/schemas/Link'
+    Link:
+      title: Link
+      type: object
+      properties:
+        self:
+          type: object
+          description: Links for message
+          properties:
+            href:
+              $ref: '#/components/schemas/Href'
+        messageEntity:
+          type: object
+          description: Links for entity message
+          properties:
+            href:
+              $ref: '#/components/schemas/Href'
+    Href:
+      title: Link Href
+      type: string
+      example: "http://localhost:8080/v1/message/7993d5d7-f875-4e82-bfbe-c12ba06a9cac"
+    Hostname:
+      title: Hostname Info
+      properties:
+        hostname:
+          type: string
+          example: "ubuntu.local"
