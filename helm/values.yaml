@@ -16,6 +16,9 @@ HTTPHealthCheckPath: /v1/actuator/health
 HTTPHealthLivenessInitialDelay: 120
 HTTPHealthReadinessInitialDelay: 15
 
+service:
+  create: false
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
