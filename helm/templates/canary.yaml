@@ -1,3 +1,4 @@
+{{- if eq .Values.flaggerApp.enable true -}}
 apiVersion: flagger.app/v1beta1
 kind: Canary
 metadata:
@@ -9,6 +10,14 @@ spec:
     name: {{ include "chatbot.fullname" . }}
   service:
     port: {{ .Values.service.port }}
+    targetPort: http
+    gateways:
+    - {{ .Values.gateway.name }}
+    hosts:
+    - {{ .Values.gateway.host.fqdn }}
+    trafficPolicy:
+      tls:
+        mode: DISABLE
   analysis:
     interval: 1m
     threshold: 10
@@ -25,6 +34,7 @@ spec:
         interval: 1m
     webhooks:
       - name: load-test
-        url: http://flagger-loadtester.test/
+        url: http://flagger-loadtester.chatbot/
         metadata:
-          cmd: "hey -z 1m -q 10 -c 2 http://{{ include "chatbot.fullname" . }}-canary.test:80/"
+          cmd: "hey -z 1m -q 10 -c 2 http://{{ include "chatbot.fullname" . }}-canary.chatbot:{{ .Values.service.port }}/"
+{{- end -}}

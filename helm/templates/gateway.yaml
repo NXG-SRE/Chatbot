@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ .Values.gateway.name }}
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - port:
+      number: {{ .Values.gateway.host.port }}
+      name: http
+      protocol: HTTP
+    hosts:
+    - {{ .Values.gateway.host.fqdn }}

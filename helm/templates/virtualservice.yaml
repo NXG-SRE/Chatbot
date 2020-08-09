@@ -1,0 +1,20 @@
+{{- if eq .Values.flaggerApp.enable false -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "chatbot.fullname" . }}
+spec:
+  hosts:
+  - {{ .Values.gateway.host.fqdn }}
+  gateways:
+  - {{ include "chatbot.fullname" . }}-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        port:
+          number: {{ .Values.service.port }}
+        host: {{ include "chatbot.fullname" . }}
+{{- end -}}
