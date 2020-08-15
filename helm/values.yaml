@@ -44,7 +44,7 @@ service:
 gateway:
   name: elnatan
   host: 
-    fqdn: chatbot.elnatan.com.br
+    fqdn: apichatbot.elnatan.com.br
     port: 80
 
 resources: {}
